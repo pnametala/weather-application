@@ -5,11 +5,16 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SimpleInjector;
+using WeatherApplication.OpenWeather.Services.Cities;
+using WeatherApplication.OpenWeather.Services.Weather;
+using WeatherApplication.Settings;
 
 namespace WeatherApplication
 {
     public class Startup
     {
+        private readonly Container _container = new Container();
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -25,11 +30,20 @@ namespace WeatherApplication
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
             services.AddSwaggerGen();
+
+            services.AddSimpleInjector(_container, options =>
+            {
+                options.AddAspNetCore()
+                    .AddControllerActivation();
+            });
+
+            InitContainer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSimpleInjector(_container);
             app.UseSwagger();
             if (env.IsDevelopment())
             {
@@ -69,6 +83,23 @@ namespace WeatherApplication
                 {
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
+            });
+            
+            _container.Verify();
+        }
+        
+        private void InitContainer()
+        {
+            _container.RegisterSingleton<ICitiesService, CitiesService>();
+            _container.RegisterSingleton<IWeatherService, WeatherService>();
+            
+            // settings
+            _container.RegisterSingleton(() =>
+            {
+                var settings = new OpenWeatherApiSettings();
+                Configuration.Bind("OpenWeather", settings);
+
+                return settings;
             });
         }
     }

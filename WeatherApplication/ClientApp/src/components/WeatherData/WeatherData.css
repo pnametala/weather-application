@@ -1,0 +1,27 @@
+﻿.weather-current .card-body.weather-current-body {
+    margin: auto;
+    width: 85%;
+}
+
+.weather-current .card-title.weather-current-city {
+    padding: 0 0 10px 0;
+    border-bottom: 1px solid;
+}
+
+.card-deck .card-body.weather-min-max {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.card-deck .card-body.weather-min-max {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.card-body.weather-min-max .weather-temp svg {
+    margin: 0 5px;
+}
