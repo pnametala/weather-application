@@ -6,25 +6,17 @@ export class SearchHistory extends Component {
     
     constructor(props) {
         super(props);
-        this.state = { 
-            cities: [],
-            chosenCity: {}
-        };
-      }
-  
-  
-    componentDidMount() {
-        this.getSearchHistory();
     }
+  
     
     render() {
         return (
             <div className="card search-history mt-4" key="search-history">
-                <div className="card-body search-history">
+                <div className="card-body">
                     <h2 className="card-title text-center">Search History</h2>
                 </div>
                 <ul className="list-group list-group-flush">
-                    {this.state.cities.map(city =>
+                    {this.props.cities.map(city =>
                     <li className="list-group-item" key={['search',city.id]}>
                         <a href="#" onClick={(evt) => this.props.onClick(evt, city)}>{city.name} ({city.country})</a>
                     </li>
@@ -32,14 +24,5 @@ export class SearchHistory extends Component {
                 </ul>
             </div>
         );
-    }
-
-    getSearchHistory = () => {
-        axios.get(`https://localhost:5001/api/cities/history`)
-        .then(res => {
-            this.setState( {
-                cities: res.data
-            })
-        });
     }
 }

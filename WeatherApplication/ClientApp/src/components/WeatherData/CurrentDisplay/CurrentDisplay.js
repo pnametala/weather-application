@@ -39,27 +39,27 @@ export class CurrentDisplay extends Component {
             )
         }
         
-        const city = this.props.city[0];
+        const city = this.props.city;
         const current = this.props.forecast.current;
-        const today = this.props.forecast.daily.shift();
+        const today = this.props.forecast.daily[0];
         return (
             <div className="card weather-current mt-4" key="current-weather">
                 <div className="card-body weather-current-body">
                     <h2 className="card-title text-center weather-current-city">{city.name} ({city.country})</h2>
                 </div>
                 <div className="row no-gutters">
-                    <div className="col-md-4">
+                    <div className="col-md-5">
                         <img src={`http://openweathermap.org/img/wn/${current.weather[0].icon}@2x.png`} className="card-img" />
                     </div>
-                    <div className="col-md-8">
+                    <div className="col-md-7">
                         <div className="card-body">
-                            <h3 className="current-weather-day">{this.timeConverter(current.dt)}</h3>
-                            <h4 className="current-weather-day">{current.weather[0].main}</h4>
-                            <p>{current.temperature}</p>
+                            <h3 className="current-weather-day text-center">{this.timeConverter(current.dt)}</h3>
+                            <h4 className="current-weather-day text-center">{current.weather[0].main}</h4>
+                            <p className="font-weight-bold text-center">{Math.round(current.temperature)}°C</p>
                         </div>
-                        <div className="card-body weather-min-max">
-                            <span className="weather-temp"><FontAwesomeIcon className="text-danger" icon={faLongArrowAltDown} />{Math.round(today.temperature.min)}</span>
-                            <span className="weather-temp"><FontAwesomeIcon className="text-success" icon={faLongArrowAltUp} />{Math.round(today.temperature.max)}</span>
+                        <div className="card-body weather-min-max text-center">
+                            <span className="weather-temp font-weight-bold"><FontAwesomeIcon className="text-danger" icon={faLongArrowAltDown} />{Math.round(today.temperature.min)}°C</span>
+                            <span className="weather-temp font-weight-bold"><FontAwesomeIcon className="text-success" icon={faLongArrowAltUp} />{Math.round(today.temperature.max)}°C</span>
                         </div>
                     </div>
                 </div>

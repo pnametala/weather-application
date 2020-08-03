@@ -36,8 +36,7 @@ namespace WeatherApplication.Controllers
         [HttpGet("history")]
         public List<City> GetHistory()
         {
-            return _service.SearchHistory;
+            return _service.SearchHistory();
         }
-
     }
 }

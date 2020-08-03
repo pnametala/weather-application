@@ -32,16 +32,18 @@ export class ForecastReport extends Component {
         }
         
         const forecast = this.props.forecast;
+        console.log(forecast.daily)
+        const dailyForecast = forecast.daily.slice(0, forecast.daily.length -1); 
         return (
             <div className="card-group mt-4">
-                {forecast.daily.map(daily =>
+                {dailyForecast.map(daily =>
                     <div className="card" key={daily.dt}>
                         <div className="card-body">
                             <h5 className="card-title text-center">{this.timeConverter(daily.dt)}</h5>
                             <img src={`http://openweathermap.org/img/wn/${daily.weather[0].icon}@2x.png`} className="card-img-top" />
                             <div className="card-body weather-min-max text-center">
-                                <span className="weather-temp"><FontAwesomeIcon className="text-danger" icon={faLongArrowAltDown} />{Math.round(daily.temperature.min)}°C</span>
-                                <span className="weather-temp"><FontAwesomeIcon className="text-success" icon={faLongArrowAltUp} />{Math.round(daily.temperature.max)}°C</span>
+                                <span className="weather-temp font-weight-bold"><FontAwesomeIcon className="text-danger" icon={faLongArrowAltDown} />{Math.round(daily.temperature.min)}°C</span>
+                                <span className="weather-temp font-weight-bold"><FontAwesomeIcon className="text-success" icon={faLongArrowAltUp} />{Math.round(daily.temperature.max)}°C</span>
                             </div>
                         </div>
                     </div>

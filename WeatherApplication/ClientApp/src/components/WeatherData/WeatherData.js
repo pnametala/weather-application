@@ -22,8 +22,10 @@ export class WeatherData extends Component {
             isLoadingSearch: false,
             isLoadingWeather: true,
             cities: [],
-            chosenCity: [],
-            forecast: {}
+            chosenCity: {},
+            searchInput: [],
+            forecast: {},
+            history: []
         };
     }
   
@@ -43,19 +45,58 @@ export class WeatherData extends Component {
         })
         .catch(err => console.log(err));
     }
-  
-    selectCity = (city) => {
-        console.log(city)
-        this.setState({chosenCity: city})
+    
+    onChange = (input) => {
+        this.setState({searchInput: input})
     }
 
     loadHistoryCity = (evt, city) => {
-        console.log(city)
         evt.persist();
-        this.setState({chosenCity: [city]}, () => this.populateWeatherData(evt));
+        this.setState({chosenCity: city}, () => this.populateWeatherData(evt));
+    }
+    
+    loadData = (evt) => {
+        if (this.state.searchInput.length === 0) {
+            evt.preventDefault();
+            return;
+        }
+        console.log(this.state.searchInput)
+        evt.persist();
+        this.setState({chosenCity: this.state.searchInput[0]}, () => this.populateWeatherData(evt));
     }
     
     componentDidMount() {
+        this.getSearchHistory();
+    }
+    
+    populateWeatherData = (evt) => {
+        evt.preventDefault();
+        const city = this.state.chosenCity;
+        
+        this.setState({
+            isLoadingWeather: true
+        })
+        axios.get(`https://localhost:5001/api/cities/${city.id}`)
+            .then(() => {
+                //successful result
+                this.getSearchHistory();
+                axios.get(`https://localhost:5001/api/weather/one-call/${city.coordinates.lat}/${city.coordinates.lon}`)
+                    .then(res => {
+                        this.setState( {
+                            forecast: res.data,
+                            isLoadingWeather: false
+                        })
+                    });
+            });
+    }
+
+    getSearchHistory = () => {
+        axios.get(`https://localhost:5001/api/cities/history`)
+            .then(res => {
+                this.setState( {
+                    history: res.data
+                })
+            });
     }
 
     renderForecastsTable(forecast) {
@@ -70,7 +111,7 @@ export class WeatherData extends Component {
                             <CurrentReport isLoading={this.state.isLoadingWeather} forecast={this.state.forecast}/>
                         </Col>
                         <Col lg={3} className="offset-lg-2">
-                            <SearchHistory onClick={this.loadHistoryCity} />
+                            <SearchHistory onClick={this.loadHistoryCity} cities={this.state.history} />
                         </Col>
                     </Row>
                 </section>
@@ -79,55 +120,34 @@ export class WeatherData extends Component {
                 </section>
             </React.Fragment>
         );
-  }
+    }
 
-  render() {
-    let contents = this.renderForecastsTable(this.state.forecast);
+    render() {
+        let contents = this.renderForecastsTable(this.state.forecast);
 
-    return (
-        <React.Fragment>
-            <form>
-                <div className="form-row d-flex justify-content-center">
-                    <div className="col-lg-3">
-                        <AsyncTypeahead
-                            id="typeahead"
-                            isLoading={this.state.isLoadingSearch}
-                            labelKey={option => `${option.name} (${option.country})`}
-                            placeholder="Search for a city..."
-                            onSearch={this.searchCities}
-                            onChange={this.selectCity}
-                            options={this.state.cities}
-                            selected={this.state.chosenCity}
-                        />
+        return (
+            <React.Fragment>
+                <form>
+                    <div className="form-row d-flex justify-content-center">
+                        <div className="col-lg-3">
+                            <AsyncTypeahead
+                                id="typeahead"
+                                isLoading={this.state.isLoadingSearch}
+                                labelKey={option => `${option.name} (${option.country})`}
+                                placeholder="Search for a city..."
+                                onSearch={this.searchCities}
+                                onChange={this.onChange}
+                                options={this.state.cities}
+                                selected={this.state.searchInput}
+                            />
+                        </div>
+                        <div className="col-lg-2">
+                            <button className="btn btn-primary" onClick={this.loadData}><FontAwesomeIcon icon={faSearch}/></button>
+                        </div>
                     </div>
-                    <div className="col-lg-2">
-                        <button className="btn btn-primary" onClick={this.populateWeatherData}><FontAwesomeIcon icon={faSearch}/></button>
-                    </div>
-                </div>
-            </form>
-            {contents}
-        </React.Fragment>
-    );
-  }
-
-    populateWeatherData = (evt) => {
-        evt.preventDefault();
-        const city = this.state.chosenCity[0];
-        console.log(city)
-        if (city === null || (Object.keys(city).length === 0 && city.constructor === Object)) return;
-        this.setState({
-            isLoadingWeather: true
-        })
-        axios.get(`https://localhost:5001/api/cities/${city.id}`)
-            .then(() => {
-                //successful result
-                axios.get(`https://localhost:5001/api/weather/one-call/${city.coordinates.lat}/${city.coordinates.lon}`)
-                    .then(res => {
-                        this.setState( {
-                            forecast: res.data,
-                            isLoadingWeather: false
-                        })
-                    });
-            });
+                </form>
+                {contents}
+            </React.Fragment>
+        );
     }
 }

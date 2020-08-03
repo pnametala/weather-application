@@ -1,9 +1,9 @@
-﻿.weather-current .card-body.weather-current-body {
+﻿.weather-current .card-body.weather-current-body, .weather-current .card-body.search-history {
     margin: auto;
     width: 85%;
 }
 
-.weather-current .card-title.weather-current-city {
+.weather-current .card-title.weather-current-city, .search-history .card-title {
     padding: 0 0 10px 0;
     border-bottom: 1px solid;
 }

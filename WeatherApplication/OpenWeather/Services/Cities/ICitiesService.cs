@@ -6,12 +6,12 @@ namespace WeatherApplication.OpenWeather.Services.Cities
 {
     public interface ICitiesService
     {
-        public List<City> Cities { get; set; }
-        
-        public List<City> SearchHistory { get; set; }
+        List<City> GetCities();
 
-        public City FindById(int id);
+        List<City> SearchHistory();
 
-        public List<City> Search(string query);
+        City FindById(int id);
+
+        List<City> Search(string query);
     }
 }

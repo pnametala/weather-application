@@ -13,7 +13,8 @@ namespace WeatherApplication.OpenWeather.Services.Weather
 
         private readonly string _baseUrl;
 
-        private readonly HttpClient _client;
+        private HttpClient _client;
+        
         public WeatherService(OpenWeatherApiSettings settings)
         {
             _apiKey = settings.ApiKey;
@@ -31,6 +32,11 @@ namespace WeatherApplication.OpenWeather.Services.Weather
 
             var content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<OneCallData>(content);
+        }
+
+        public void SetHttpClient(HttpClient client)
+        {
+            _client = client;
         }
     }
 }
